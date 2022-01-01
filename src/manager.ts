@@ -10,7 +10,6 @@ export default class Manager {
   }
 
   diagnostics() {
-
     if (this.config.diagnostics.logs) {
       this.logs = window.createOutputChannel(this.config.diagnostics.logName);
       this.logs.show();
@@ -25,7 +24,6 @@ export default class Manager {
 
     this.logs?.appendLine("Extension initiliazed");
   }
-
   
 
 }
