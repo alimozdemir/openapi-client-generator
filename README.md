@@ -1,6 +1,6 @@
 # OpenAPI Client Generator
 
-This extension generates typescript models and axios request for the developer. The main objective is increase the productivity. This extension aims for the productivity and you can create the models and the requests via interface without any CLI. Also I want to add a versioning of the requests and schemas which the developer could see the updates and differences.
+This extension generates typescript models and axios request for the developer. This extension aims for the productivity. Also I want to create a system that could see the updates and differences between generated and the latest easily.
 
 ## Features
 
