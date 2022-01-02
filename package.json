@@ -14,7 +14,8 @@
     "onStartupFinished",
     "onCommand:openapi-client-generator.helloWorld",
     "onCommand:openapi-client-generator.explorer.add",
-    "onCommand:openapi-client-generator.explorer.refresh"
+    "onCommand:openapi-client-generator.explorer.refresh",
+    "onCommand:openapi-client-generator.explorer.remove"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -32,6 +33,11 @@
         "command": "openapi-client-generator.explorer.refresh",
         "title": "Refresh sources",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "openapi-client-generator.explorer.remove",
+        "title": "Remove source",
+        "icon": "$(remove)"
       }
     ],
     "viewsContainers": {
@@ -63,6 +69,13 @@
           "command": "openapi-client-generator.explorer.refresh",
           "when": "view == openapi-client-generator.explorer",
           "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "openapi-client-generator.explorer.remove",
+          "when": "view == openapi-client-generator.explorer && viewItem == root",
+          "group": "navigation@4"
         }
       ],
       "commandPalette": [

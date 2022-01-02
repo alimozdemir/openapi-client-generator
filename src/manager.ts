@@ -3,6 +3,7 @@ import Configuration from "./configuration";
 import { SourceParser } from "./core/source.parser";
 import { SourceService } from "./core/source.service";
 import { SourceType } from "./core/sources";
+import { Node } from "./nodes/node";
 import { NodeProvider } from "./nodes/node.provider";
 
 export default class Manager {
@@ -37,7 +38,7 @@ export default class Manager {
 
       this.sourceService.add(SourceType.Server, result);
 
-      this.nodeProvider?.refresh();
+      this.refresh();
 
       this.logs?.appendLine('A new source added');
     });
@@ -48,8 +49,25 @@ export default class Manager {
       this.logs?.appendLine('Refreshing the sources');
     });
 
+    const removeCommand = commands.registerCommand('openapi-client-generator.explorer.remove', async (node: Node) => {
+      this.logs?.appendLine('Removing the source');
+
+      const action = this.sourceService.remove(node);
+
+      if (action) {
+        window.showInformationMessage(`The source ${node.label} is deleted`);
+        this.refresh();
+      } else {
+        window.showWarningMessage(`The source ${node.label} is not deleted`)
+      }
+
+      this.logs?.appendLine('Source removed');
+    });
+
+
     this.context.subscriptions.push(addCommand)
     this.context.subscriptions.push(refreshCommand);
+    this.context.subscriptions.push(removeCommand);
 
     this.logs?.appendLine("Tree View initialized.");
   }

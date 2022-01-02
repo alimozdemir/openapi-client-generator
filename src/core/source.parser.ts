@@ -11,6 +11,9 @@ export class SourceParser {
 
   async prepareSource(source: ISource) : Promise<Node | undefined> {
     const root: Node = new Node(source.name, TreeItemCollapsibleState.Collapsed, []);
+    root.contextValue = 'root';
+    root.id = source.id;
+
     const doc = await SwaggerParser.parse(source.schema);
 
     if (!source.schema.openapi) {

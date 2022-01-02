@@ -47,6 +47,19 @@ export class SourceService {
     this.addSourceToState(source);
   }
 
+  remove(node: Node) {
+    const source = this.sources.findIndex(i => i.id === node.id);
+  
+    if (source < 0)
+      return false;
+
+    this.sources.splice(source, 1);
+
+    this.context.workspaceState.update(Keys.SOURCES, this.sources);
+    
+    return true;
+  }
+
   private async prepare () : Promise<Array<Node>> {
     // this.prepareSource(i)
     const promises = this.sources.map(i => this.parser.prepareSource(i));
