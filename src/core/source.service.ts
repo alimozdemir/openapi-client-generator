@@ -1,5 +1,5 @@
 import { ExtensionContext, Task, TreeItemCollapsibleState, Uri, workspace } from "vscode";
-import { Node } from "../nodes/node";
+import { Node, notEmptyNode } from "../nodes/node";
 import { Keys } from "./keys";
 import { ISource, SourceType } from "./sources";
 import { SourceParser } from "./source.parser";
@@ -34,19 +34,14 @@ export class SourceService {
     const source: ISource = {
       id: v4(),
       type: type,
-      sourcePath: sourcePath,
-      filePath: "",
-      name: "Source #1"
+      path: sourcePath,
+      name: "Source #1",
+      schema: undefined
     };
 
     if (type == SourceType.Server) {
-      const response = await getJSON(sourcePath)
-      
-      const savePath = source.id;
-
-      
-      // TODO use callback
-      source.filePath = savePath;
+      const response = await getJSON(sourcePath);
+      source.schema = response;
     }
 
     this.addSourceToState(source);
@@ -58,7 +53,7 @@ export class SourceService {
 
     const result = await Promise.all(promises);
     
-    return result;
+    return result.filter(notEmptyNode);
   }
 
 }

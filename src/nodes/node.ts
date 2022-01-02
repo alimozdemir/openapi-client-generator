@@ -7,3 +7,9 @@ export class Node extends TreeItem {
       super(label, collapsibleState)
   }
 }
+
+export function notEmptyNode(value: Node | undefined): value is Node {
+  if (value === null || value === undefined) return false;
+  const testDummy: Node = value;
+  return true;
+}

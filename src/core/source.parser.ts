@@ -9,13 +9,17 @@ export class SourceParser {
   constructor() {
   }
 
-  async prepareSource(source: ISource) : Promise<Node> {
+  async prepareSource(source: ISource) : Promise<Node | undefined> {
     const root: Node = new Node(source.name, TreeItemCollapsibleState.Collapsed, []);
-    const doc = await SwaggerParser.parse(source.filePath);
+    const doc = await SwaggerParser.parse(source.schema);
 
-    if (doc.info.version == "3.0.0") {
+    if (!source.schema.openapi) {
+      return;
+    }
+
+    if (source.schema.openapi == "3.0.0") {
       this.prepareDoc30(root, doc as OpenAPIV3.Document);
-    } else if (doc.info.version == "3.1.0") {
+    } else if (source.schema.openapi == "3.1.0") {
       this.prepareDoc31(root, doc as OpenAPIV3_1.Document);
     }
 
@@ -23,9 +27,19 @@ export class SourceParser {
   }
 
   private async prepareDoc30(node: Node, doc: OpenAPIV3.Document) {
-    
-    if (doc.components)
-      this.prepareComponents30(node, doc.components);
+    if (!doc.components)
+      return;
+
+
+    const paths = new Node('Paths', TreeItemCollapsibleState.Collapsed, []);
+    node.children.push(paths);
+
+    this.preparePaths30(paths, doc.paths);
+
+    const schemas = new Node('Schemas', TreeItemCollapsibleState.Collapsed, []);
+    node.children.push(schemas);
+
+    this.prepareComponents30(schemas, doc.components);
   }
   
   private async prepareDoc31(node: Node, doc: OpenAPIV3_1.Document) {
@@ -37,16 +51,38 @@ export class SourceParser {
     
   }
 
+  // TODO: Use a design pattern or an interface for parsing versions
   private prepareComponents30(node: Node, components: OpenAPIV3.ComponentsObject) {
     if (!components.schemas)
       return;
 
-    const keys = Object.keys(components.schemas);
+    const keys = Object.entries(components.schemas);
     
-    for (const key in keys)
-      node.children.push(new Node(key, TreeItemCollapsibleState.Collapsed, []));
+    keys.forEach(([key, value]) => {
+      node.children.push(new Node(key, TreeItemCollapsibleState.None, []));
+    });
   }
 
+  private preparePaths30(node: Node, paths: OpenAPIV3.PathsObject) {
+    if (!paths)
+      return;
+    
+    const keys = Object.entries(paths);
+
+    keys.forEach(([key, value]) => {
+      const path = new Node(key, TreeItemCollapsibleState.Collapsed, []);
+      node.children.push(path);
+
+      this.prepareActions30(path, value);
+    });
+  }
+  prepareActions30(node: Node, value: any) {
+    const keys = Object.entries(value);
+    
+    keys.forEach(([key, value]) => {
+      node.children.push(new Node(key, TreeItemCollapsibleState.None, []));
+    });
+  }
 
   private prepareComponents31(node: Node, components: OpenAPIV3_1.ComponentsObject) {
     for (const key in components.schemas) {

@@ -13,7 +13,8 @@
     "onView:openapi-client-generator.explorer",
     "onStartupFinished",
     "onCommand:openapi-client-generator.helloWorld",
-    "onCommand:openapi-client-generator.explorer.add"
+    "onCommand:openapi-client-generator.explorer.add",
+    "onCommand:openapi-client-generator.explorer.refresh"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -26,6 +27,11 @@
         "command": "openapi-client-generator.explorer.add",
         "title": "Add new source",
         "icon": "$(add)"
+      },
+      {
+        "command": "openapi-client-generator.explorer.refresh",
+        "title": "Refresh sources",
+        "icon": "$(refresh)"
       }
     ],
     "viewsContainers": {
@@ -52,11 +58,19 @@
           "command": "openapi-client-generator.explorer.add",
           "when": "view == openapi-client-generator.explorer",
           "group": "navigation@2"
+        },
+        {
+          "command": "openapi-client-generator.explorer.refresh",
+          "when": "view == openapi-client-generator.explorer",
+          "group": "navigation@3"
         }
       ],
       "commandPalette": [
         {
           "command": "openapi-client-generator.explorer.add"
+        },
+        {
+          "command": "openapi-client-generator.explorer.refresh"
         }
       ]
     }

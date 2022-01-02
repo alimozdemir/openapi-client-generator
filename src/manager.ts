@@ -42,9 +42,21 @@ export default class Manager {
       this.logs?.appendLine('A new source added');
     });
 
+    const refreshCommand = commands.registerCommand('openapi-client-generator.explorer.refresh', async () => {
+      await this.refresh();
+
+      this.logs?.appendLine('Refreshing the sources');
+    });
+
     this.context.subscriptions.push(addCommand)
+    this.context.subscriptions.push(refreshCommand);
 
     this.logs?.appendLine("Tree View initialized.");
+  }
+
+  async refresh() {
+    await this.sourceService.refresh();
+    this.nodeProvider?.refresh();
   }
 
   diagnostics() {

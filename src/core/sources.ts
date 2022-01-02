@@ -2,8 +2,8 @@ export interface ISource {
   id: string
   name: string
   type: SourceType
-  sourcePath: string
-  filePath: string
+  path: string,
+  schema: any
 }
 
 export enum SourceType {
