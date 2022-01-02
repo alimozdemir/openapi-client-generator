@@ -1,4 +1,4 @@
-import { ExtensionContext, Task, TreeItemCollapsibleState, Uri } from "vscode";
+import { ExtensionContext, Task, TreeItemCollapsibleState, Uri, workspace } from "vscode";
 import { Node } from "../nodes/node";
 import { Keys } from "./keys";
 import { ISource, SourceType } from "./sources";
@@ -10,13 +10,19 @@ import { getFileNameFromURL } from "./utils";
 
 export class SourceService {
   private sources: Array<ISource> = [];
+  roots: Node[] = [];
 
   constructor(readonly context: ExtensionContext, readonly parser: SourceParser) {
-    this.refresh();
+  
   }
 
-  refresh() {
+  async refresh() {
     this.sources = this.context.workspaceState.get<Array<ISource>>(Keys.SOURCES, []);
+    this.roots = await this.prepare();
+  }
+
+  getRoots() {
+    return this.roots;
   }
 
   private addSourceToState(source: ISource) {
@@ -36,17 +42,17 @@ export class SourceService {
     if (type == SourceType.Server) {
       const response = await getJSON(sourcePath)
       
-      const savePath = this.context.storageUri?.toString() + "/" + source.id;
+      const savePath = source.id;
+
+      
       // TODO use callback
-      fs.writeFileSync(savePath, response);
-    
       source.filePath = savePath;
     }
 
     this.addSourceToState(source);
   }
 
-  async prepare () : Promise<Array<Node>> {
+  private async prepare () : Promise<Array<Node>> {
     // this.prepareSource(i)
     const promises = this.sources.map(i => this.parser.prepareSource(i));
 

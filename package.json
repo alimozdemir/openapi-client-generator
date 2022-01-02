@@ -10,8 +10,10 @@
     "Other"
   ],
   "activationEvents": [
+    "onView:openapi-client-generator.explorer",
     "onStartupFinished",
-    "onCommand:openapi-client-generator.helloWorld"
+    "onCommand:openapi-client-generator.helloWorld",
+    "onCommand:openapi-client-generator.explorer.add"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -19,8 +21,45 @@
       {
         "command": "openapi-client-generator.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "openapi-client-generator.explorer.add",
+        "title": "Add new source",
+        "icon": "$(add)"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "openapi-client-explorer",
+          "title": "OpenAPI Client Explorer",
+          "icon": "media/exp.svg"
+        }
+      ]
+    },
+    "views": {
+      "openapi-client-explorer": [
+        {
+          "id": "openapi-client-generator.explorer",
+          "name": "OpenAPI Client Explorer",
+          "icon": "media/exp.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "openapi-client-generator.explorer.add",
+          "when": "view == openapi-client-generator.explorer",
+          "group": "navigation@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "openapi-client-generator.explorer.add"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

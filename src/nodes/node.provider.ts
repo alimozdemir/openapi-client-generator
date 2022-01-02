@@ -1,18 +1,30 @@
-import { Event, ProviderResult, TreeDataProvider, TreeItem } from "vscode";
+import { Event, ProviderResult, TreeDataProvider, TreeItem, EventEmitter } from "vscode";
+import { SourceService } from "../core/source.service";
 import { Node } from "./node";
 
 export class NodeProvider implements TreeDataProvider<Node> {
   
+  constructor(readonly sourceService: SourceService) {
+    
+  }
 
+  private _onDidChangeTreeData: EventEmitter<Node | undefined | void> = new EventEmitter<Node | undefined | void>();
+	readonly onDidChangeTreeData: Event<Node | undefined | void> = this._onDidChangeTreeData.event;
   
-  onDidChangeTreeData?: Event<void | Node | null | undefined> | undefined;
-  
+  refresh() {
+    this._onDidChangeTreeData.fire();
+  }
+
   getTreeItem(element: Node): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
   getChildren(element?: Node): ProviderResult<Node[]> {
-    return element?.children;
+    if (element)
+      return element?.children;
+    else {
+      return this.sourceService.getRoots();
+    }
   }
 
 }
