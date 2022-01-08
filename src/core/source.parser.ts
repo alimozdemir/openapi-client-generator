@@ -20,7 +20,7 @@ export class SourceParser {
       return;
     }
 
-    if (source.schema.openapi == "3.0.0") {
+    if (source.schema.openapi.startsWith("3.0")) {
       this.prepareDoc30(root, doc as OpenAPIV3.Document);
     } else if (source.schema.openapi == "3.1.0") {
       this.prepareDoc31(root, doc as OpenAPIV3_1.Document);

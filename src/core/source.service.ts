@@ -1,12 +1,10 @@
-import { ExtensionContext, Task, TreeItemCollapsibleState, Uri, workspace } from "vscode";
+import { ExtensionContext } from "vscode";
 import { Node, notEmptyNode } from "../nodes/node";
 import { Keys } from "./keys";
 import { ISource, SourceType } from "./sources";
 import { SourceParser } from "./source.parser";
 import { getJSON } from "./request";
 import { v4 } from 'uuid';
-import * as fs from 'fs';
-import { getFileNameFromURL } from "./utils";
 
 export class SourceService {
   private sources: Array<ISource> = [];
@@ -35,16 +33,25 @@ export class SourceService {
       id: v4(),
       type: type,
       path: sourcePath,
-      name: "Source #1",
+      name: '',
       schema: undefined
     };
 
     if (type == SourceType.Server) {
       const response = await getJSON(sourcePath);
       source.schema = response;
+      source.name = this.guessName(response);
     }
 
     this.addSourceToState(source);
+  }
+
+
+  private guessName(response: any) {
+    if (response?.info?.title)
+      return response.info.title;
+
+    return 'Unknown source';
   }
 
   remove(node: Node) {

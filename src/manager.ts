@@ -32,7 +32,7 @@ export default class Manager {
 
     const addCommand = commands.registerCommand('openapi-client-generator.explorer.add', async () => {
       const result = await window.showInputBox({ placeHolder: 'Please enter url of open api json/yaml file.' });
-      
+
       if (!result)
         return;
 
