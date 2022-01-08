@@ -1,4 +1,4 @@
-import { ExtensionContext, TreeItemCollapsibleState } from "vscode";
+import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { Node } from "../nodes/node";
 import { Keys } from "./keys";
 import { ISource } from "./sources";
@@ -40,6 +40,7 @@ export class SourceParser {
     this.preparePaths30(paths, doc.paths);
 
     const schemas = new Node('Schemas', TreeItemCollapsibleState.Collapsed, []);
+    schemas.iconPath = new ThemeIcon("preview")
     node.children.push(schemas);
 
     this.prepareComponents30(schemas, doc.components);
@@ -62,7 +63,69 @@ export class SourceParser {
     const keys = Object.entries(components.schemas);
     
     keys.forEach(([key, value]) => {
-      node.children.push(new Node(key, TreeItemCollapsibleState.None, []));
+      const refs = this.prepareRefs(value);
+      const componentNode = new Node(key, refs.length > 0 ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None, []);
+      componentNode.children.push(...refs);
+
+      node.children.push(componentNode);
+    });
+  }
+
+  private prepareRefs(value: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject) {
+    const refs = new Set<string>();
+    
+    const nodes: Node[] = [];
+
+    this.findReferences(refs, value);
+
+    refs.forEach((val, key) => {
+      const refNode = new Node(this.normalizeRef(val), TreeItemCollapsibleState.None, []);
+      nodes.push(refNode);
+      refNode.iconPath = new ThemeIcon("references");
+    });
+
+    return nodes;
+  }
+
+  private normalizeRef(path: string) {
+    const data = path.split('/');
+    return data[0] + data[data.length - 1];
+  }
+
+  private findReferences(refs: Set<string>, value: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject) {
+
+    if ('$ref' in value) {
+      refs.add(value.$ref);
+      return;
+    }
+
+    if (value.type === 'array') {
+      if ('$ref' in value.items) {
+        refs.add(value.items.$ref);
+        return;
+      }
+
+    }
+
+    if (!value.properties)
+      return;
+
+    const props = Object.entries(value.properties);
+
+    props.forEach(([key, val]) => {
+      if ('$ref' in val) {
+        refs.add(val.$ref);
+        return;
+      }
+
+      if (val.type !== 'array') {
+        return;
+      }
+
+      if ('$ref' in val.items) {
+        refs.add(val.items.$ref);
+        return;
+      }
     });
   }
 
