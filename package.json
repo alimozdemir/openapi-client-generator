@@ -38,6 +38,11 @@
         "command": "openapi-client-generator.explorer.remove",
         "title": "Remove source",
         "icon": "$(remove)"
+      },
+      {
+        "command": "openapi-client-generator.explorer.rename",
+        "title": "Rename source",
+        "icon": "$(edit)"
       }
     ],
     "viewsContainers": {
@@ -74,8 +79,12 @@
       "view/item/context": [
         {
           "command": "openapi-client-generator.explorer.remove",
+          "when": "view == openapi-client-generator.explorer && viewItem == root"
+        },
+        {
+          "command": "openapi-client-generator.explorer.rename",
           "when": "view == openapi-client-generator.explorer && viewItem == root",
-          "group": "navigation@4"
+          "group": "inline"
         }
       ],
       "commandPalette": [

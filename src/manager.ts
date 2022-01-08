@@ -36,9 +36,9 @@ export default class Manager {
       if (!result)
         return;
 
-      this.sourceService.add(SourceType.Server, result);
+      await this.sourceService.add(SourceType.Server, result);
 
-      this.refresh();
+      await this.refresh();
 
       this.logs?.appendLine('A new source added');
     });
@@ -50,8 +50,13 @@ export default class Manager {
     });
 
     const removeCommand = commands.registerCommand('openapi-client-generator.explorer.remove', async (node: Node) => {
-      this.logs?.appendLine('Removing the source');
+      if (!node || !node.id) {
+        this.logs?.appendLine('You have to run this command from the tree view.');
+        return;
+      }
 
+      this.logs?.appendLine('Removing the source');
+      
       const action = this.sourceService.remove(node);
 
       if (action) {
@@ -65,9 +70,38 @@ export default class Manager {
     });
 
 
+    const renameCommand = commands.registerCommand('openapi-client-generator.explorer.rename', async (node: Node) => {
+      if (!node || !node.id) {
+        this.logs?.appendLine('You have to run this command from the tree view.');
+        return;
+      }
+
+      this.logs?.appendLine('Renaming the source');
+
+      const result = await window.showInputBox({ placeHolder: 'Please enter a new name for the given source.' });
+
+      if (!result) {
+        this.logs?.appendLine('The rename input is empty. Leaving the renaming process.');
+        return;
+      }
+
+      const action = this.sourceService.rename(node, result);
+
+      if (action) {
+        window.showInformationMessage(`The source ${node.label} is renamed`);
+        node.label = result;
+        this.nodeProvider?.refresh();
+      } else {
+        window.showWarningMessage(`The source ${node.label} is not renamed`)
+      }
+
+    });
+
+
     this.context.subscriptions.push(addCommand)
     this.context.subscriptions.push(refreshCommand);
     this.context.subscriptions.push(removeCommand);
+    this.context.subscriptions.push(renameCommand);
 
     this.logs?.appendLine("Tree View initialized.");
   }

@@ -8,7 +8,7 @@ export class Node extends TreeItem {
    */
   id: string | undefined;
 
-  constructor(public readonly label: string,
+  constructor(public label: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
     public readonly children: Array<Node>) {
       super(label, collapsibleState)

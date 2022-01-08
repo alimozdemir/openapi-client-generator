@@ -67,6 +67,19 @@ export class SourceService {
     return true;
   }
 
+  rename(node: Node, name: string) {
+    const source = this.sources.find(i => i.id === node.id);
+  
+    if (!source)
+      return false;
+    
+    source.name = name;
+  
+    this.context.workspaceState.update(Keys.SOURCES, this.sources);
+    
+    return true;
+  }
+
   private async prepare () : Promise<Array<Node>> {
     // this.prepareSource(i)
     const promises = this.sources.map(i => this.parser.prepareSource(i));
