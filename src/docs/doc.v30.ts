@@ -106,4 +106,12 @@ export class DocV30 extends Doc {
     });
   }
 
+  getSchema(doc: OpenAPIV3.Document, name: string) {
+    if (!doc.components || !doc.components.schemas) {
+      return;
+    }
+
+    return doc.components.schemas[name];
+  }
+
 }

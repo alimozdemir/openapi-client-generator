@@ -105,5 +105,12 @@ export class DocV31 extends Doc {
       node.children.push(new Node(key, TreeItemCollapsibleState.None, []));
     });
   }
+  
+  getSchema(doc: OpenAPIV3_1.Document, name: string) {
+    if (!doc.components || !doc.components.schemas) {
+      return;
+    }
 
+    return doc.components.schemas[name];
+  }
 }

@@ -22,7 +22,15 @@ export class SchemaGenerateCommand implements BaseCommand {
       return;
     }
 
-    
+    const doc = this.manager.getDoc(source.schema);
 
+    if (!doc) {
+      this.manager.log('Doc is not found');
+      return;
+    }
+
+    const model = doc.getSchema(source.schema, node.label);
+    
+    this.manager.log(JSON.stringify(model));
   }
 }

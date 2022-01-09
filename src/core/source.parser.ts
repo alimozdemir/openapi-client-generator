@@ -2,16 +2,11 @@ import { TreeItemCollapsibleState } from "vscode";
 import { Node } from "../nodes/node";
 import { ISource } from "./sources";
 import * as SwaggerParser from 'swagger-parser';
-import { Doc } from "../docs/doc";
-import { DocV30 } from "../docs/doc.v30";
-import { DocV31 } from "../docs/doc.v31";
+import { DocManager } from "../docs/doc.manager";
 
 export class SourceParser {
-  private docs: Doc[] = [];
 
-  constructor() {
-    this.docs.push(new DocV30());
-    this.docs.push(new DocV31());
+  constructor(private readonly docManager: DocManager) {
   }
 
   async prepareSource(source: ISource) : Promise<Node | undefined> {
@@ -25,7 +20,9 @@ export class SourceParser {
       return;
     }
 
-    this.docs.forEach(doc => {
+    const docs = this.docManager.getDocs();
+
+    docs.forEach(doc => {
       if (!source.schema.openapi.startsWith(doc.version)) {
         return;
       }

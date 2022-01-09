@@ -1,10 +1,9 @@
-import { commands, ExtensionContext, OutputChannel, StatusBarAlignment, StatusBarItem, window, workspace } from "vscode";
-import { registerCommands } from "./commands";
-import { CommandManager } from "./commands/command.manager";
+import { ExtensionContext, OutputChannel, StatusBarAlignment, StatusBarItem, window } from "vscode";
 import Configuration from "./configuration";
 import { SourceParser } from "./core/source.parser";
 import { SourceService } from "./core/source.service";
 import { SourceType } from "./core/sources";
+import { DocManager } from "./docs/doc.manager";
 import { Node } from "./nodes/node";
 import { NodeProvider } from "./nodes/node.provider";
 
@@ -14,9 +13,11 @@ export default class Manager {
   private statusBar: StatusBarItem | undefined;
   private nodeProvider: NodeProvider | undefined;
   private sourceService: SourceService;
+  private docManager: DocManager;
 
   constructor(private readonly context: ExtensionContext, private readonly config: Configuration) {
-    this.sourceService = new SourceService(context, new SourceParser());
+    this.docManager = new DocManager();
+    this.sourceService = new SourceService(context, new SourceParser(this.docManager));
   }
 
   async initialize() {
@@ -63,6 +64,10 @@ export default class Manager {
    */
   getSource(node: Node) {
     return this.sourceService.getSource(node);
+  }
+
+  getDoc(schema: any) {
+    return this.docManager.getDoc(schema);
   }
 
 

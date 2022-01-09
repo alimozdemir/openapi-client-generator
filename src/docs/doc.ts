@@ -44,4 +44,6 @@ export abstract class Doc {
   abstract prepareComponents(node: Node, doc: any) : void;
 
   abstract preparePaths(node: Node, doc: any) : void;
+
+  abstract getSchema(doc: any, name: string): any;
 }
