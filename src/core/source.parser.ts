@@ -65,6 +65,7 @@ export class SourceParser {
     keys.forEach(([key, value]) => {
       const refs = this.prepareRefs(value);
       const componentNode = new Node(key, refs.length > 0 ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None, []);
+      componentNode.contextValue = 'schema';
       componentNode.children.push(...refs);
 
       node.children.push(componentNode);
@@ -80,6 +81,7 @@ export class SourceParser {
 
     refs.forEach((val, key) => {
       const refNode = new Node(this.normalizeRef(val), TreeItemCollapsibleState.None, []);
+      refNode.contextValue = val;
       nodes.push(refNode);
       refNode.iconPath = new ThemeIcon("references");
     });
@@ -137,6 +139,7 @@ export class SourceParser {
 
     keys.forEach(([key, value]) => {
       const path = new Node(key, TreeItemCollapsibleState.Collapsed, []);
+      path.contextValue = "path";
       node.children.push(path);
 
       this.prepareActions30(path, value);

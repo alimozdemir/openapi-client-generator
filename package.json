@@ -15,7 +15,9 @@
     "onCommand:openapi-client-generator.helloWorld",
     "onCommand:openapi-client-generator.explorer.add",
     "onCommand:openapi-client-generator.explorer.refresh",
-    "onCommand:openapi-client-generator.explorer.remove"
+    "onCommand:openapi-client-generator.explorer.remove",
+    "onCommand:openapi-client-generator.explorer.rename",
+    "onCommand:openapi-client-generator.explorer.gen-schema"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -43,6 +45,11 @@
         "command": "openapi-client-generator.explorer.rename",
         "title": "Rename source",
         "icon": "$(edit)"
+      },
+      {
+        "command": "openapi-client-generator.explorer.gen-schema",
+        "title": "Generate Schema",
+        "icon": "$(code)"
       }
     ],
     "viewsContainers": {
@@ -84,6 +91,11 @@
         {
           "command": "openapi-client-generator.explorer.rename",
           "when": "view == openapi-client-generator.explorer && viewItem == root",
+          "group": "inline"
+        },
+        {
+          "command": "openapi-client-generator.explorer.gen-schema",
+          "when": "view == openapi-client-generator.explorer && viewItem == schema",
           "group": "inline"
         }
       ],

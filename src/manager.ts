@@ -39,7 +39,7 @@ export default class Manager {
       await this.sourceService.add(SourceType.Server, result);
 
       await this.refresh();
-
+ 
       this.logs?.appendLine('A new source added');
     });
 
