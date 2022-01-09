@@ -31,6 +31,12 @@ export class SchemaGenerateCommand implements BaseCommand {
 
     const model = doc.getSchema(source.schema, node.label);
     
+    const generated = await this.manager.generateSchema(node, model);
+
+
+    this.manager.log(generated);
+  
     this.manager.log(JSON.stringify(model));
+  
   }
 }

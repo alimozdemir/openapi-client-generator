@@ -1,5 +1,6 @@
 import { ExtensionContext, OutputChannel, StatusBarAlignment, StatusBarItem, window } from "vscode";
 import Configuration from "./configuration";
+import { GeneratorService } from "./core/generator.service";
 import { SourceParser } from "./core/source.parser";
 import { SourceService } from "./core/source.service";
 import { SourceType } from "./core/sources";
@@ -14,9 +15,11 @@ export default class Manager {
   private nodeProvider: NodeProvider | undefined;
   private sourceService: SourceService;
   private docManager: DocManager;
+  private generatorService: GeneratorService;
 
   constructor(private readonly context: ExtensionContext, private readonly config: Configuration) {
     this.docManager = new DocManager();
+    this.generatorService = new GeneratorService();
     this.sourceService = new SourceService(context, new SourceParser(this.docManager));
   }
 
@@ -70,6 +73,9 @@ export default class Manager {
     return this.docManager.getDoc(schema);
   }
 
+  generateSchema(node: Node, obj: any) {
+    return this.generatorService.generateSchema(node, obj);
+  }
 
   /**
    * Source methods

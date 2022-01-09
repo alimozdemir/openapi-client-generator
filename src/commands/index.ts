@@ -1,6 +1,6 @@
 import Manager from "../manager";
 import { CommandManager } from "./command.manager";
-import { SchemaGenerateCommand } from "./schema.generator";
+import { SchemaGenerateCommand } from "./schema.generate";
 import { SourceAddCommand } from "./source.add";
 import { SourceRefreshCommand } from "./source.refresh";
 import { SourceRemoveCommand } from "./source.remove";
