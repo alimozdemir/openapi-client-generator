@@ -19,6 +19,10 @@ export class SourceService {
     this.roots = await this.prepare();
   }
 
+  private findSource(id: string) {
+    return this.sources.find(i => i.id === id);
+  }
+
   getRoots() {
     return this.roots;
   }
@@ -87,6 +91,25 @@ export class SourceService {
     const result = await Promise.all(promises);
     
     return result.filter(notEmptyNode);
+  }
+
+  private getSourceId(id: string) {
+    const theFirstSplash = id.indexOf('/');
+    const endLength = theFirstSplash > -1 ? theFirstSplash : id.length;
+
+    return id.substring(0, endLength)
+  }
+
+  public getSource(node: Node) {
+    if (!node.id) {
+      throw Error('Id is not found');
+    }
+
+    const sourceId = this.getSourceId(node.id);
+
+    const source = this.findSource(sourceId);
+
+    return source;
   }
 
 }

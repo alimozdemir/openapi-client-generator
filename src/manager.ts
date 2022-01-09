@@ -59,6 +59,14 @@ export default class Manager {
   }
   
   /**
+   * Schema Methods
+   */
+  getSource(node: Node) {
+    return this.sourceService.getSource(node);
+  }
+
+
+  /**
    * Source methods
    */
   // TODO: try to organize this method with an interface or class (manager)

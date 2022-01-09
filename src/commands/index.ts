@@ -1,5 +1,6 @@
 import Manager from "../manager";
 import { CommandManager } from "./command.manager";
+import { SchemaGenerateCommand } from "./schema.generator";
 import { SourceAddCommand } from "./source.add";
 import { SourceRefreshCommand } from "./source.refresh";
 import { SourceRemoveCommand } from "./source.remove";
@@ -10,4 +11,5 @@ export function registerCommands(commandManager: CommandManager, manager: Manage
   commandManager.register(new SourceRenameCommand(manager));
   commandManager.register(new SourceRefreshCommand(manager));
   commandManager.register(new SourceRemoveCommand(manager));
+  commandManager.register(new SchemaGenerateCommand(manager));
 }

@@ -41,6 +41,7 @@ export class SourceParser {
 
     const schemas = new Node('Schemas', TreeItemCollapsibleState.Collapsed, []);
     schemas.iconPath = new ThemeIcon("preview")
+    schemas.id = node.id + '/schemas';
     node.children.push(schemas);
 
     this.prepareComponents30(schemas, doc.components);
@@ -66,6 +67,7 @@ export class SourceParser {
       const refs = this.prepareRefs(value);
       const componentNode = new Node(key, refs.length > 0 ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None, []);
       componentNode.contextValue = 'schema';
+      componentNode.id = node.id + '/' + key;
       componentNode.children.push(...refs);
 
       node.children.push(componentNode);
@@ -145,6 +147,7 @@ export class SourceParser {
       this.prepareActions30(path, value);
     });
   }
+  
   prepareActions30(node: Node, value: any) {
     const keys = Object.entries(value);
     
