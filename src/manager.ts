@@ -32,49 +32,6 @@ export default class Manager {
 
     this.context.subscriptions.push(treeView);
 
-    const addCommand = commands.registerCommand('openapi-client-generator.explorer.add', async () => {
-      const result = await window.showInputBox({ placeHolder: 'Please enter url of open api json/yaml file.' });
-
-      if (!result)
-        return;
-
-      await this.sourceService.add(SourceType.Server, result);
-
-      await this.refresh();
- 
-      this.logs?.appendLine('A new source added');
-    });
-
-    const refreshCommand = commands.registerCommand('openapi-client-generator.explorer.refresh', async () => {
-      await this.refresh();
-
-      this.logs?.appendLine('Refreshing the sources');
-    });
-
-    const removeCommand = commands.registerCommand('openapi-client-generator.explorer.remove', async (node: Node) => {
-      if (!node || !node.id) {
-        this.logs?.appendLine('You have to run this command from the tree view.');
-        return;
-      }
-
-      this.logs?.appendLine('Removing the source');
-      
-      const action = this.sourceService.remove(node);
-
-      if (action) {
-        window.showInformationMessage(`The source ${node.label} is deleted`);
-        this.refresh();
-      } else {
-        window.showWarningMessage(`The source ${node.label} is not deleted`)
-      }
-
-      this.logs?.appendLine('Source removed');
-    });
-
-    this.context.subscriptions.push(addCommand)
-    this.context.subscriptions.push(refreshCommand);
-    this.context.subscriptions.push(removeCommand);
-
     this.logs?.appendLine("Tree View initialized.");
   }
 
@@ -101,9 +58,6 @@ export default class Manager {
     this.logs?.appendLine("Diagnostics initiliazed");
   }
   
-
-
-
   /**
    * Source methods
    */
@@ -114,6 +68,10 @@ export default class Manager {
 
   renameSource(node: Node, name: string) {
     return this.sourceService.rename(node, name);
+  }
+
+  removeSource(node: Node) {
+    return this.sourceService.remove(node);
   }
 
   /**
