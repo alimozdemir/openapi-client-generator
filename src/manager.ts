@@ -1,4 +1,6 @@
 import { commands, ExtensionContext, OutputChannel, StatusBarAlignment, StatusBarItem, window, workspace } from "vscode";
+import { registerCommands } from "./commands";
+import { CommandManager } from "./commands/command.manager";
 import Configuration from "./configuration";
 import { SourceParser } from "./core/source.parser";
 import { SourceService } from "./core/source.service";
@@ -69,45 +71,17 @@ export default class Manager {
       this.logs?.appendLine('Source removed');
     });
 
-
-    const renameCommand = commands.registerCommand('openapi-client-generator.explorer.rename', async (node: Node) => {
-      if (!node || !node.id) {
-        this.logs?.appendLine('You have to run this command from the tree view.');
-        return;
-      }
-
-      this.logs?.appendLine('Renaming the source');
-
-      const result = await window.showInputBox({ placeHolder: 'Please enter a new name for the given source.' });
-
-      if (!result) {
-        this.logs?.appendLine('The rename input is empty. Leaving the renaming process.');
-        return;
-      }
-
-      const action = this.sourceService.rename(node, result);
-
-      if (action) {
-        window.showInformationMessage(`The source ${node.label} is renamed`);
-        node.label = result;
-        this.nodeProvider?.refresh();
-      } else {
-        window.showWarningMessage(`The source ${node.label} is not renamed`)
-      }
-
-    });
-
-
     this.context.subscriptions.push(addCommand)
     this.context.subscriptions.push(refreshCommand);
     this.context.subscriptions.push(removeCommand);
-    this.context.subscriptions.push(renameCommand);
 
     this.logs?.appendLine("Tree View initialized.");
   }
 
-  async refresh() {
-    await this.sourceService.refresh();
+  async refresh(onlyTreeView: boolean = false) {
+    if (!onlyTreeView) {
+      await this.sourceService.refresh();
+    }
     this.nodeProvider?.refresh();
   }
 
@@ -127,5 +101,27 @@ export default class Manager {
     this.logs?.appendLine("Diagnostics initiliazed");
   }
   
+
+
+
+  /**
+   * Source methods
+   */
+  // TODO: try to organize this method with an interface or class (manager)
+  addSource(source: string) {
+    return this.sourceService.add(SourceType.Server, source);
+  }
+
+  renameSource(node: Node, name: string) {
+    return this.sourceService.rename(node, name);
+  }
+
+  /**
+   * Utils
+   */
+
+  log(message: string) {
+    this.logs?.appendLine(message);
+  }
 
 }
