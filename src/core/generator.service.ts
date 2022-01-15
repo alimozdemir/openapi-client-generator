@@ -26,8 +26,6 @@ export class GeneratorService {
       this.mockRef(copy, ref);
     })
 
-    console.log(JSON.stringify(copy));
-
     const compiled = await compile(copy, schemaName, this.compileOptions);
   
     return compiled;

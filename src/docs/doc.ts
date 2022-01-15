@@ -10,7 +10,7 @@ export abstract class Doc {
 
   normalizeRef(path: string) {
     const data = path.split('/');
-    return data[0] + data[data.length - 1];
+    return data[data.length - 1];
   }
 
   prepareSource(source: ISource, doc: any) : Node | undefined {
