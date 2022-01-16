@@ -1,9 +1,18 @@
 const { Project, TypeAliasDeclaration } = require('ts-morph');
-
+const path = require('path')
 function findTypes() {
   const project = new Project();
 
+  const parsed = path.parse("./a.ts");
 
+  console.log(parsed.root);
+  console.log(parsed.dir);
+  console.log(parsed.name);
+  console.log(parsed.ext);
+
+  console.log((path.join(parsed.dir, parsed.name)));
+
+  return;
 
   const code = `export type OperationStatus = string;
 
@@ -19,10 +28,6 @@ function findTypes() {
   
   const mytest = project.addSourceFilesAtPaths("/Users/alimozdemir/Documents/Temp/vscodeext/**")
   
-  console.log(mytest);
-
-  return;
-
   const myTestSource = project.getSourceFile("mytest.ts");
 
   const OTP = project.getModuleResolutionHost();

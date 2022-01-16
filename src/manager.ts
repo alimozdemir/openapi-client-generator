@@ -1,6 +1,7 @@
-import { ExtensionContext, OutputChannel, StatusBarAlignment, StatusBarItem, window, workspace } from "vscode";
+import { ExtensionContext, OutputChannel, Position, StatusBarAlignment, StatusBarItem, TextEdit, Uri, window, workspace, WorkspaceEdit } from "vscode";
 import Configuration from "./configuration";
 import { GeneratorService } from "./core/generator.service";
+import { PathService } from "./core/path.service";
 import { ReferenceService } from "./core/reference.service";
 import { SourceParser } from "./core/source.parser";
 import { SourceService } from "./core/source.service";
@@ -20,25 +21,16 @@ export default class Manager {
   private generatorService: GeneratorService;
   private referenceService: ReferenceService;
   private typescriptService: TypescriptService;
+  private pathService: PathService;
 
   constructor(private readonly context: ExtensionContext, private readonly config: Configuration) {
     this.docManager = new DocManager();
     this.generatorService = new GeneratorService();
     this.referenceService = new ReferenceService();
-  
-    this.typescriptService = new TypescriptService(this.workspacePath);
+    this.pathService = new PathService();
+
+    this.typescriptService = new TypescriptService(this.pathService);
     this.sourceService = new SourceService(context, new SourceParser(this.docManager));
-  }
-
-  private workspacePath() {
-    const workspaces = workspace.workspaceFolders;
-
-    // TODO: make sure there exists a workspace for the extension
-    if (!workspaces) {
-      return './**';
-    }
-
-    return workspaces[0].uri.fsPath + '/**'
   }
 
   async initialize() {
@@ -55,6 +47,21 @@ export default class Manager {
     this.context.subscriptions.push(treeView);
 
     this.logs?.appendLine("Tree View initialized.");
+  }
+
+  async createFile(name: string, content: string) {
+    const wsedit = new WorkspaceEdit();
+    
+    const path = this.pathService.getFilePath(name); 
+
+    const file = Uri.file(path);
+
+    wsedit.createFile(file);
+
+    wsedit.insert(file, new Position(0, 0), content);
+
+    await workspace.applyEdit(wsedit);
+  
   }
 
   async refresh(onlyTreeView: boolean = false) {

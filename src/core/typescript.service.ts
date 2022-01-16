@@ -1,11 +1,12 @@
 import { Project, SourceFile } from 'ts-morph';
 import { v4 } from 'uuid';
+import { PathService } from './path.service';
 
 export class TypescriptService {
   private project: Project;
   private sourceMap: Map<string, string[]> = new Map<string, string[]>();
   
-  constructor(readonly path: () => string) {
+  constructor(readonly pathService: PathService) {
     this.project = new Project();
   }
 
@@ -43,7 +44,7 @@ export class TypescriptService {
 
   scan() {
     this.sourceMap.clear();
-    const path = this.path();
+    const path = this.pathService.getGlob();
     const sourceFiles = this.project.addSourceFilesAtPaths(path);
     
     sourceFiles.forEach(sourceFile => {
@@ -89,9 +90,11 @@ export class TypescriptService {
     const sourceFile = this.project.createSourceFile(fileName, code);
 
     refPairs.forEach((value: string, key: string) => {
+      const prunePath = this.pathService.prunePath(value);
+
       sourceFile.addImportDeclaration({
         namedImports: [key],
-        moduleSpecifier: value
+        moduleSpecifier: this.pathService.removeFileExt(prunePath)
       });
     });
 

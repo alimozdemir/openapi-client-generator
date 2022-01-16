@@ -1,3 +1,4 @@
+import { workspace, window } from "vscode";
 import Manager from "../manager";
 import { Node } from "../nodes/node";
 import { BaseCommand } from "./base.command";
@@ -38,6 +39,16 @@ export class SchemaGenerateCommand implements BaseCommand {
     this.manager.log(generated);
   
     this.manager.log(imported);
+
+    /*
+    const document = await workspace.openTextDocument({
+        language: "typescript",
+        content: imported,
+    });
+
+    await window.showTextDocument(document);*/
+
+    this.manager.createFile(node.label, imported);
   
   }
 }
