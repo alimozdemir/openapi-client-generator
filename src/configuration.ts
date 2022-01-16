@@ -1,7 +1,13 @@
 import { workspace } from "vscode";
 
+export const ExtensionCodeName = 'openapi-client-generator';
+
+export function createExtensionAlias(name: string) {
+  return ExtensionCodeName + '.' + name;
+}
+
 export default class Configuration {
-  name: string = 'openapi-client-generator';
+  name: string = ExtensionCodeName;
   diagnostics: Diagnostics;
 
   constructor() {

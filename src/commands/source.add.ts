@@ -1,12 +1,18 @@
 import { window } from "vscode";
+import { CommandTypes } from ".";
+import { createExtensionAlias } from "../configuration";
 import Manager from "../manager";
 import { BaseCommand } from "./base.command";
 
 export class SourceAddCommand implements BaseCommand {
   title: string = '';
-  command: string = 'openapi-client-generator.explorer.add';
   tooltip?: string | undefined;
   arguments?: any[] | undefined;
+  type: CommandTypes = 'explorer.add';
+
+  get command() : string {
+    return createExtensionAlias(this.type);
+  }
 
   constructor(private readonly manager: Manager) {
   }

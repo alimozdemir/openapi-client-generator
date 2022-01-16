@@ -4,8 +4,14 @@ import { ISource } from "../core/sources";
 
 export abstract class Doc {
   abstract version: string;
+  protected schemas: Map<string, Node>;
 
   constructor() {
+    this.schemas = new Map<string, Node>();
+  }
+
+  getNodeBySchema(name: string) {
+    return this.schemas.get(name);
   }
 
   normalizeRef(path: string) {

@@ -12,7 +12,7 @@ export async function activate(context: vscode.ExtensionContext) {
   
   const commandManager: CommandManager = new CommandManager();
 
-  const manager: Manager = new Manager(context, new Configuration());
+  const manager: Manager = new Manager(context, new Configuration(), commandManager);
   manager.diagnostics();
 
   registerCommands(commandManager, manager);
@@ -22,3 +22,5 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
+

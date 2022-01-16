@@ -21,6 +21,8 @@ export class DocV31 extends Doc {
       componentNode.contextValue = 'schema';
       componentNode.id = node.id + '/' + key;
       componentNode.children.push(...refs);
+      
+      this.schemas.set(key, componentNode);
 
       node.children.push(componentNode);
     });

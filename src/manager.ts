@@ -1,4 +1,5 @@
-import { ExtensionContext, OutputChannel, Position, StatusBarAlignment, StatusBarItem, TextEdit, Uri, window, workspace, WorkspaceEdit } from "vscode";
+import { ExtensionContext, OutputChannel, StatusBarAlignment, StatusBarItem, Uri, window, workspace } from "vscode";
+import { CommandManager } from "./commands/command.manager";
 import Configuration from "./configuration";
 import { GeneratorService } from "./core/generator.service";
 import { PathService } from "./core/path.service";
@@ -7,6 +8,7 @@ import { SourceParser } from "./core/source.parser";
 import { SourceService } from "./core/source.service";
 import { SourceType } from "./core/sources";
 import { TypescriptService } from "./core/typescript.service";
+import { Doc } from "./docs/doc";
 import { DocManager } from "./docs/doc.manager";
 import { Node } from "./nodes/node";
 import { NodeProvider } from "./nodes/node.provider";
@@ -23,7 +25,7 @@ export default class Manager {
   private typescriptService: TypescriptService;
   private pathService: PathService;
 
-  constructor(private readonly context: ExtensionContext, private readonly config: Configuration) {
+  constructor(private readonly context: ExtensionContext, private readonly config: Configuration, private readonly commandManager: CommandManager) {
     this.docManager = new DocManager();
     this.generatorService = new GeneratorService();
     this.referenceService = new ReferenceService();
@@ -50,18 +52,15 @@ export default class Manager {
   }
 
   async createFile(name: string, content: string) {
-    const wsedit = new WorkspaceEdit();
-    
-    const path = this.pathService.getFilePath(name); 
+    const path = this.pathService.getFilePath(name);
 
     const file = Uri.file(path);
 
-    wsedit.createFile(file);
+    // ref: https://stackoverflow.com/questions/64940895/create-and-save-file-with-a-custom-custom-content-and-name-using-vs-code-api
 
-    wsedit.insert(file, new Position(0, 0), content);
+    await workspace.fs.writeFile(file, new TextEncoder().encode(content));
+    window.showTextDocument(file, { preview: false });
 
-    await workspace.applyEdit(wsedit);
-  
   }
 
   async refresh(onlyTreeView: boolean = false) {
@@ -86,7 +85,7 @@ export default class Manager {
 
     this.logs?.appendLine("Diagnostics initiliazed");
   }
-  
+
   /**
    * Schema Methods
    */
@@ -102,19 +101,21 @@ export default class Manager {
     return this.generatorService.generateSchema(node, obj);
   }
 
-  resolveSchema(node: Node, code: string) {
+  async resolveSchema(node: Node, code: string, doc: Doc) {
     this.typescriptService.scan();
 
     const refs = node.children.map(i => i.label);
 
-    const pruneCode = this.typescriptService.removeTypes(code, refs);
-    
-    const locations = this.typescriptService.findLocationOfRefs(refs);
+    let locations = this.typescriptService.findLocationOfRefs(refs);
 
+    // generate non-exists refs
     if (locations.size != refs.length) {
-      // generate non-exists refs
+      await this.resolveNeighboorSchema(locations, refs, doc);
+
+      locations = this.typescriptService.findLocationOfRefs(refs);
     }
 
+    const pruneCode = this.typescriptService.removeTypes(code, refs);
 
     // ref strategy, if FIFO, LIFO or throw an error
 
@@ -128,6 +129,24 @@ export default class Manager {
 
     return importedCode;
   }
+
+  async resolveNeighboorSchema(locations: Map<string, string[]>, refs: string[], doc: Doc) {
+    
+    const tasks: Array<Thenable<unknown>> = [];
+
+    refs.forEach(ref => {
+      if (locations.has(ref))
+        return;
+
+      const node = doc.getNodeBySchema(ref);
+      tasks.push(this.commandManager.executeCommand('explorer.gen-schema', node));
+    });
+
+    await Promise.all(tasks);
+
+    this.typescriptService.scan();
+  }
+
 
   /**
    * Source methods

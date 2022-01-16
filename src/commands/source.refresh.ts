@@ -1,9 +1,16 @@
+import { CommandTypes } from ".";
+import { createExtensionAlias } from "../configuration";
 import Manager from "../manager";
 import { BaseCommand } from "./base.command";
 
 export class SourceRefreshCommand implements BaseCommand {
   title: string = 'Source Refresh';
-  command: string = 'openapi-client-generator.explorer.refresh';
+  
+  type: CommandTypes = 'explorer.refresh';
+
+  get command() : string {
+    return createExtensionAlias(this.type);
+  }
 
   constructor(private readonly manager: Manager) {
   }

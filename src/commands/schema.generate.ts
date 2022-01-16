@@ -1,11 +1,17 @@
 import { workspace, window } from "vscode";
+import { CommandTypes } from ".";
+import { createExtensionAlias } from "../configuration";
 import Manager from "../manager";
 import { Node } from "../nodes/node";
 import { BaseCommand } from "./base.command";
 
 export class SchemaGenerateCommand implements BaseCommand {
   title: string = 'Schema Generate';
-  command: string = 'openapi-client-generator.explorer.gen-schema';
+  type: CommandTypes = 'explorer.gen-schema';
+
+  get command() : string {
+    return createExtensionAlias(this.type);
+  }
 
   constructor(private readonly manager: Manager) {
   }
@@ -34,7 +40,7 @@ export class SchemaGenerateCommand implements BaseCommand {
     
     const generated = await this.manager.generateSchema(node, model);
 
-    const imported = this.manager.resolveSchema(node, generated);
+    const imported = await this.manager.resolveSchema(node, generated, doc);
 
     this.manager.log(generated);
   
@@ -48,7 +54,8 @@ export class SchemaGenerateCommand implements BaseCommand {
 
     await window.showTextDocument(document);*/
 
-    this.manager.createFile(node.label, imported);
+
+    await this.manager.createFile(node.label, imported);
   
   }
 }

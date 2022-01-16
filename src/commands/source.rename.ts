@@ -1,11 +1,17 @@
 import { window } from "vscode";
+import { CommandTypes } from ".";
+import { createExtensionAlias } from "../configuration";
 import Manager from "../manager";
 import { Node } from "../nodes/node";
 import { BaseCommand } from "./base.command";
 
 export class SourceRenameCommand implements BaseCommand {
   title: string = 'Rename Source';
-  command: string = 'openapi-client-generator.explorer.rename';
+  
+  type: CommandTypes = 'explorer.rename';
+  get command() : string {
+    return createExtensionAlias(this.type);
+  }
 
   constructor(private readonly manager: Manager) {
   }
