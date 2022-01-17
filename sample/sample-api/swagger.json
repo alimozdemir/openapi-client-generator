@@ -5,6 +5,36 @@
     "version": "1.0"
   },
   "paths": {
+    "/Node": {
+      "get": {
+        "tags": [
+          "Node"
+        ],
+        "operationId": "Get",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Node"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Node"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Node"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/Operation": {
       "post": {
         "tags": [
@@ -149,6 +179,23 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OperationModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Node": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Node"
             },
             "nullable": true
           }
