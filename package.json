@@ -2,7 +2,26 @@
   "name": "openapi-client-generator",
   "displayName": "openapi-client-generator",
   "description": "OpenAPI client-side model-response generator",
-  "version": "0.0.1",
+  "version": "0.0.1-beta",
+  "publisher": "alimozdemir",
+  "author": {
+    "email": "alm.ozdmr@live.com",
+    "url": "https://alimozdemir.com",
+    "name": "Alim Özdemir"
+  },
+  "repository": {
+    "url": "https://github.com/alimozdemir/openapi-client-generator",
+    "type": "git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "openapi",
+    "swagger",
+    "generation",
+    "openapi-to-typescript",
+    "interfaces"
+  ],
   "engines": {
     "vscode": "^1.63.0"
   },
