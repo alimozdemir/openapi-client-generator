@@ -1,0 +1,9 @@
+<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>Layer 1</title>
+  <path id="svg_2" d="m16,29c-7.18232,0 -13,-5.81768 -13,-13c0,-7.18232 5.81768,-13 13,-13c7.18232,0 13,5.81768 13,13c0,7.18232 -5.81768,13 -13,13z" opacity="undefined" stroke-dasharray="5,5" stroke="#000" fill="#fff"/>
+  <text transform="matrix(1 0 0 1 0 0)" xml:space="preserve" text-anchor="start" font-size="18" stroke-width="0" id="svg_4" y="21.08333" x="10.94141" stroke-dasharray="5,5" stroke="#000" fill="#000000">T</text>
+  <text xml:space="preserve" text-anchor="start" font-size="13" stroke-width="0" id="svg_5" y="21.08334" x="17.3724" stroke-dasharray="5,5" stroke="#000" fill="#000000">s</text>
+ </g>
+</svg>

@@ -67,7 +67,7 @@
         {
           "id": "openapi-client-explorer",
           "title": "OpenAPI Client Explorer",
-          "icon": "media/exp.svg"
+          "icon": "media/logo.svg"
         }
       ]
     },
@@ -76,7 +76,7 @@
         {
           "id": "openapi-client-generator.explorer",
           "name": "OpenAPI Client Explorer",
-          "icon": "media/exp.svg"
+          "icon": "media/logo.svg"
         }
       ]
     },
