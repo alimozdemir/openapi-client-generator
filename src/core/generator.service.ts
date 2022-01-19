@@ -1,4 +1,5 @@
 import { compile, Options } from 'json-schema-to-typescript'
+import { Doc } from '../docs/doc';
 import { Node } from '../nodes/node';
 
 export class GeneratorService {
@@ -9,22 +10,25 @@ export class GeneratorService {
     unreachableDefinitions: true
   }
 
-  generateSchema(node: Node, obj: any) {
-    const refs = node.children.map(i => i.contextValue);
-    
-    return this.compileSchema(obj, refs, node.label);
+  generateSchema(node: Node, obj: any, doc: Doc) {
+    return this.compileSchema(obj, node.label, doc);
   }
 
-  private async compileSchema(obj: any, refs: (string | undefined)[], schemaName: string) {
-    const copy = JSON.parse(JSON.stringify(obj));
+  private async compileSchema(obj: any, schemaName: string, doc: Doc) {
+    let copy = JSON.parse(JSON.stringify(obj));
+
+    copy.title = schemaName;
+    const refs = doc.pruneRefs(copy, schemaName);
 
     refs.forEach(ref => {
-      if (!ref) {
-        return;
+      if (ref) {
+        if (ref == '#') // root
+          return;
+        this.mockRef(copy, ref);
+      } else {
+        throw Error ('Unexpected behavior from typescript generation')
       }
-
-      this.mockRef(copy, ref);
-    })
+    });
 
     const compiled = await compile(copy, schemaName, this.compileOptions);
   

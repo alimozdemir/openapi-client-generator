@@ -52,4 +52,6 @@ export abstract class Doc {
   abstract preparePaths(node: Node, doc: any) : void;
 
   abstract getSchema(doc: any, name: string): any;
+
+  abstract pruneRefs(value: any, schemaName: string): Set<string>;
 }

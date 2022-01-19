@@ -65,7 +65,7 @@ export default class Manager {
 
   async refresh(onlyTreeView: boolean = false) {
     if (!onlyTreeView) {
-      await this.sourceService.refresh();
+      await this.sourceService.refresh(true);
     }
     this.nodeProvider?.refresh();
   }
@@ -97,8 +97,8 @@ export default class Manager {
     return this.docManager.getDoc(schema);
   }
 
-  generateSchema(node: Node, obj: any) {
-    return this.generatorService.generateSchema(node, obj);
+  generateSchema(node: Node, obj: any, doc: Doc) {
+    return this.generatorService.generateSchema(node, obj, doc);
   }
 
   async resolveSchema(node: Node, code: string, doc: Doc) {
@@ -110,7 +110,7 @@ export default class Manager {
 
     // generate non-exists refs
     if (locations.size != refs.length) {
-      await this.resolveNeighboorSchema(locations, refs, doc);
+      await this.resolveNeighboorSchema(locations, refs, doc, node.label);
 
       locations = this.typescriptService.findLocationOfRefs(refs);
     }
@@ -130,12 +130,12 @@ export default class Manager {
     return importedCode;
   }
 
-  async resolveNeighboorSchema(locations: Map<string, string[]>, refs: string[], doc: Doc) {
+  async resolveNeighboorSchema(locations: Map<string, string[]>, refs: string[], doc: Doc, schemaName: string) {
     
     const tasks: Array<Thenable<unknown>> = [];
 
     refs.forEach(ref => {
-      if (locations.has(ref))
+      if (locations.has(ref) || ref == schemaName) // location found or it is the root
         return;
 
       const node = doc.getNodeBySchema(ref);

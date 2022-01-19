@@ -14,8 +14,21 @@ export class SourceService {
   
   }
 
-  async refresh() {
+  async refresh(force: boolean = false) {
     this.sources = this.context.workspaceState.get<Array<ISource>>(Keys.SOURCES, []);
+
+    if (force) {
+      const sourceTasks: Array<Promise<void>> = [];
+
+      for (const source of this.sources) {
+        sourceTasks.push(this.updateSource(source));
+      }
+  
+      await Promise.all(sourceTasks);
+  
+      this.context.workspaceState.update(Keys.SOURCES, this.sources);
+    }
+
     this.roots = await this.prepare();
   }
 
@@ -42,12 +55,16 @@ export class SourceService {
     };
 
     if (type == SourceType.Server) {
-      const response = await getJSON(sourcePath);
-      source.schema = response;
-      source.name = this.guessName(response);
+      await this.updateSource(source);
     }
 
     this.addSourceToState(source);
+  }
+
+  private async updateSource(source: ISource) {
+    const response = await getJSON(source.path);
+    source.schema = response;
+    source.name = this.guessName(response);
   }
 
 

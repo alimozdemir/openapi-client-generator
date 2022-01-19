@@ -16,7 +16,7 @@ export class DocV30 extends Doc {
     const keys = Object.entries(components.schemas);
     
     keys.forEach(([key, value]) => {
-      const refs = this.prepareRefs(value);
+      const refs = this.prepareRefs(value, key);
       const componentNode = new Node(key, refs.length > 0 ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None, []);
       componentNode.contextValue = 'schema';
       componentNode.id = node.id + '/' + key;
@@ -29,12 +29,12 @@ export class DocV30 extends Doc {
   }
 
 
-  private prepareRefs(value: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject) {
+  private prepareRefs(value: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject, schemaName: string) {
     const refs = new Set<string>();
     
     const nodes: Node[] = [];
 
-    this.findReferences(refs, value);
+    this.findReferences(refs, value, schemaName);
 
     refs.forEach((val, key) => {
       const refNode = new Node(this.normalizeRef(val), TreeItemCollapsibleState.None, []);
@@ -46,16 +46,46 @@ export class DocV30 extends Doc {
     return nodes;
   }
 
-  private findReferences(refs: Set<string>, value: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject) {
+  pruneRefs(value: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject, schemaName: string) {
+    const refs = new Set<string>();
+    this.findReferences(refs, value, schemaName, true);
+    return refs;
+  }
+
+  private simplifyRef(val: string, schemaName: string) {
+    const path = val.split('/');
+    const name = path[path.length - 1];
+
+    if (name != schemaName) {
+      return '#/' + path[path.length - 1];
+    } else {
+      return '#'; // root
+    }
+  }
+
+  private setReference(refs: Set<string>, val: { $ref: string }, schemaName: string, prune: boolean = false) {
+
+    if (prune) {
+      const pruneRef = this.simplifyRef(val.$ref, schemaName);
+      val.$ref = pruneRef;
+      refs.add(pruneRef);
+    } else {
+      refs.add(val.$ref);
+    }
+  }
+
+  private findReferences(refs: Set<string>, value: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject, schemaName: string, prune: boolean = false) {
 
     if ('$ref' in value) {
-      refs.add(value.$ref);
+      //refs.add(value.$ref);
+      this.setReference(refs, value, schemaName, prune);
       return;
     }
 
     if (value.type === 'array') {
       if ('$ref' in value.items) {
-        refs.add(value.items.$ref);
+        // refs.add(value.items.$ref);
+        this.setReference(refs, value.items, schemaName, prune);
         return;
       }
 
@@ -68,7 +98,8 @@ export class DocV30 extends Doc {
 
     props.forEach(([key, val]) => {
       if ('$ref' in val) {
-        refs.add(val.$ref);
+        // refs.add(val.$ref);
+        this.setReference(refs, val, schemaName, prune);
         return;
       }
 
@@ -77,7 +108,8 @@ export class DocV30 extends Doc {
       }
 
       if ('$ref' in val.items) {
-        refs.add(val.items.$ref);
+        // refs.add(val.items.$ref);
+        this.setReference(refs, val.items, schemaName, prune);
         return;
       }
     });
