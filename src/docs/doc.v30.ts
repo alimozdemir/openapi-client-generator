@@ -17,7 +17,7 @@ export class DocV30 extends Doc {
     
     keys.forEach(([key, value]) => {
       const refs = this.prepareRefs(value, key);
-      const componentNode = new Node(key, refs.length > 0 ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None, []);
+      const componentNode = new Node(key, refs.length > 0 ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.None, []);
       componentNode.contextValue = 'schema';
       componentNode.id = node.id + '/' + key;
       componentNode.children.push(...refs);
@@ -40,7 +40,7 @@ export class DocV30 extends Doc {
       const refNode = new Node(this.normalizeRef(val), TreeItemCollapsibleState.None, []);
       refNode.contextValue = val;
       nodes.push(refNode);
-      refNode.iconPath = new ThemeIcon("references");
+      // refNode.iconPath = new ThemeIcon("references");
     });
 
     return nodes;

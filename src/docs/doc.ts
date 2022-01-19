@@ -20,7 +20,7 @@ export abstract class Doc {
   }
 
   prepareSource(source: ISource, doc: any) : Node | undefined {
-    const root: Node = new Node(source.name, TreeItemCollapsibleState.Collapsed, []);
+    const root: Node = new Node(source.name, TreeItemCollapsibleState.Expanded, []);
     root.contextValue = 'root';
     root.id = source.id;
 
@@ -40,7 +40,7 @@ export abstract class Doc {
     this.preparePaths(paths, doc);
 
     const schemas = new Node('Schemas', TreeItemCollapsibleState.Collapsed, []);
-    schemas.iconPath = new ThemeIcon("preview")
+    // schemas.iconPath = new ThemeIcon("preview")
     schemas.id = node.id + '/schemas';
     node.children.push(schemas);
 

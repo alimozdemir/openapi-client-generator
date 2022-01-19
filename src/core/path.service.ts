@@ -1,8 +1,14 @@
 import * as vscode from 'vscode';
 import { workspace } from 'vscode';
 import { parse, join } from 'path';
+import Configuration from '../configuration';
 
 export class PathService {
+
+  constructor(private readonly configuration: Configuration) {
+    
+  }
+
   getWorkspaces() {
     return workspace.workspaceFolders?.map(i => i.uri.fsPath);
   }
@@ -18,7 +24,7 @@ export class PathService {
   getGlob() {
     const workspace = this.getWorkspace();
 
-    return workspace + '/**'
+    return workspace + this.configuration.folder;
   }
 
   getFilePath(name: string) {

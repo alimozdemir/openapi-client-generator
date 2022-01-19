@@ -10,7 +10,7 @@ export class SourceParser {
   }
 
   async prepareSource(source: ISource) : Promise<Node | undefined> {
-    const root: Node = new Node(source.name, TreeItemCollapsibleState.Collapsed, []);
+    const root: Node = new Node(source.name, TreeItemCollapsibleState.Expanded, []);
     root.contextValue = 'root';
     root.id = source.id;
 

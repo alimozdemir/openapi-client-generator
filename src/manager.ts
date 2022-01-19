@@ -3,7 +3,6 @@ import { CommandManager } from "./commands/command.manager";
 import Configuration from "./configuration";
 import { GeneratorService } from "./core/generator.service";
 import { PathService } from "./core/path.service";
-import { ReferenceService } from "./core/reference.service";
 import { SourceParser } from "./core/source.parser";
 import { SourceService } from "./core/source.service";
 import { SourceType } from "./core/sources";
@@ -21,15 +20,13 @@ export default class Manager {
   private sourceService: SourceService;
   private docManager: DocManager;
   private generatorService: GeneratorService;
-  private referenceService: ReferenceService;
   private typescriptService: TypescriptService;
   private pathService: PathService;
 
   constructor(private readonly context: ExtensionContext, private readonly config: Configuration, private readonly commandManager: CommandManager) {
     this.docManager = new DocManager();
     this.generatorService = new GeneratorService();
-    this.referenceService = new ReferenceService();
-    this.pathService = new PathService();
+    this.pathService = new PathService(config);
 
     this.typescriptService = new TypescriptService(this.pathService);
     this.sourceService = new SourceService(context, new SourceParser(this.docManager));

@@ -9,10 +9,12 @@ export function createExtensionAlias(name: string) {
 export default class Configuration {
   name: string = ExtensionCodeName;
   diagnostics: Diagnostics;
+  folder: string;
 
   constructor() {
     const configuration = workspace.getConfiguration(this.name);
     this.diagnostics = configuration.get('diagnostics', new Diagnostics());
+    this.folder = configuration.get<string>('folder', '/**');
   }
 }
 
