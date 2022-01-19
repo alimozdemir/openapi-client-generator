@@ -30,11 +30,15 @@ export class PathService {
   getFilePath(name: string) {
     const workspace = this.getWorkspace();
 
-    return `${workspace}/${name}.ts`;
+    const parsed = parse(this.configuration.folder);
+
+    return `${workspace}${parsed.dir}/${name}.ts`;
   }
 
   prunePath(path: string) {
-    const workspace = this.getWorkspace();
+    const parsed = parse(this.configuration.folder);
+    const workspace = join(this.getWorkspace(), parsed.dir);
+    
     return path.replace(workspace, '.');
   }
 

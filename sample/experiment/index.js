@@ -46,4 +46,8 @@ function findTypes() {
   console.log(project.getSourceFile("test.ts").getText())
 }
 
-findTypes();
+const parsed = path.parse("/**");
+
+console.log(parsed.dir);
+
+//findTypes();

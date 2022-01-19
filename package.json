@@ -21,6 +21,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "OpenAPI Client Generator",
+      "properties": {
+        "openapi-client-generator.folder": {
+          "default": "/**",
+          "type": "string",
+          "description": "Generation folder"
+        }
+      }
+    },
     "commands": [
       {
         "command": "openapi-client-generator.helloWorld",
